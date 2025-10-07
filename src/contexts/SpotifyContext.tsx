@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
+import { toast } from '@/hooks/use-toast';
 
 interface Track {
   uri: string;
@@ -329,22 +330,34 @@ export const SpotifyProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, [accessToken]);
 
   const play = async (contextUri?: string, uris?: string[], offset?: number) => {
-    if (!accessToken) return;
+    if (!accessToken) {
+      toast({ title: 'دسترسی به توکن اسپوتیفای وجود ندارد', variant: 'destructive' });
+      return;
+    }
 
-    // Always activate the web player device before playing
+    // Find the Web Player device
     let deviceId = deviceIdRef.current;
     if (!deviceId) {
-      // Try to find the active device
-      deviceId = devices.find(d => d.is_active)?.id;
+      // Try to find the device named 'FCPlayer Web Player'
+      const webPlayer = devices.find(d => d.name === 'FCPlayer Web Player');
+      deviceId = webPlayer?.id || devices.find(d => d.is_active)?.id;
     }
-    if (!deviceId) return;
+    if (!deviceId) {
+      toast({ title: 'دستگاه Web Player فعال نیست', description: 'لطفاً مطمئن شوید دستگاه مرورگر شما در لیست دستگاه‌های اسپوتیفای فعال است.', variant: 'destructive' });
+      return;
+    }
 
-    // Transfer playback to web player if not active
+    // Transfer playback to Web Player if not active
     const webPlayerDevice = devices.find(d => d.id === deviceId);
     if (webPlayerDevice && !webPlayerDevice.is_active) {
-      await transferPlayback(deviceId);
-      // Wait a moment for device activation
-      await new Promise(res => setTimeout(res, 500));
+      try {
+        await transferPlayback(deviceId);
+        // Wait for device activation
+        await new Promise(res => setTimeout(res, 1200));
+      } catch (err) {
+        toast({ title: 'انتقال پخش به Web Player ناموفق بود', variant: 'destructive' });
+        return;
+      }
     }
 
     const body: any = {};
@@ -353,7 +366,7 @@ export const SpotifyProvider: React.FC<{ children: ReactNode }> = ({ children })
     if (offset !== undefined) body.offset = { position: offset };
 
     try {
-      await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+      const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
         method: 'PUT',
         headers: { 
           Authorization: `Bearer ${accessToken}`,
@@ -361,8 +374,14 @@ export const SpotifyProvider: React.FC<{ children: ReactNode }> = ({ children })
         },
         body: JSON.stringify(body),
       });
-      setTimeout(refreshPlaybackState, 500);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        toast({ title: 'پخش موزیک ناموفق بود', description: errorData.error?.message || 'خطای ناشناخته', variant: 'destructive' });
+        return;
+      }
+      setTimeout(refreshPlaybackState, 1000);
     } catch (error) {
+      toast({ title: 'خطا در ارسال درخواست پخش', description: error instanceof Error ? error.message : String(error), variant: 'destructive' });
       console.error('Play error:', error);
     }
   };
