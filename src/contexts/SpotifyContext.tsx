@@ -73,6 +73,7 @@ interface SpotifyContextType {
   getRecentlyPlayed: () => Promise<any>;
   getTopTracks: (timeRange?: string) => Promise<any>;
   getTopArtists: (timeRange?: string) => Promise<any>;
+  getQueue: () => Promise<any>;
 }
 
 const SpotifyContext = createContext<SpotifyContextType | undefined>(undefined);
@@ -661,6 +662,21 @@ export const SpotifyProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   };
 
+  // Fetch the current playback queue
+  const getQueue = async () => {
+    if (!accessToken) return null;
+
+    try {
+      const response = await fetch('https://api.spotify.com/v1/me/player/queue', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      return response.ok ? await response.json() : null;
+    } catch (error) {
+      console.error('Get queue error:', error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     const handleMessage = async (event: MessageEvent) => {
       if (event.data?.type === 'spotify_auth_code') {
@@ -842,6 +858,7 @@ export const SpotifyProvider: React.FC<{ children: ReactNode }> = ({ children })
         getRecentlyPlayed,
         getTopTracks,
         getTopArtists,
+        getQueue,
       }}
     >
       {children}

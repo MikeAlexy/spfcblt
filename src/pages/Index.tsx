@@ -5,10 +5,11 @@ import { MusicPlayer } from '@/components/MusicPlayer';
 import { SearchTracks } from '@/components/SearchTracks';
 import { Playlists } from '@/components/Playlists';
 import { Library } from '@/components/Library';
+import QueuePage from './Queue';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Music2, LogOut, Loader2, AlertCircle, Search, ListMusic, Library as LibraryIcon } from 'lucide-react';
+import { Music2, LogOut, Loader2, AlertCircle, Search, ListMusic, Library as LibraryIcon, ListOrdered } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function Index() {
@@ -140,7 +141,7 @@ export default function Index() {
             )}
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="player" className="gap-2">
                   <Music2 className="w-4 h-4" />
                   Player
@@ -156,6 +157,10 @@ export default function Index() {
                 <TabsTrigger value="library" className="gap-2">
                   <LibraryIcon className="w-4 h-4" />
                   Library
+                </TabsTrigger>
+                <TabsTrigger value="queue" className="gap-2">
+                  <ListOrdered className="w-4 h-4" />
+                  Queue
                 </TabsTrigger>
               </TabsList>
 
@@ -178,6 +183,10 @@ export default function Index() {
 
               <TabsContent value="library">
                 <Library />
+              </TabsContent>
+
+              <TabsContent value="queue">
+                <QueuePage />
               </TabsContent>
             </Tabs>
           </div>
