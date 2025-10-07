@@ -1,0 +1,20 @@
+{
+  "miniapp": {
+    "version": "1",
+    "name": "SptPlay!",
+    "iconUrl": "https://spfcblt.vercel.app/logo.png",
+    "homeUrl": "https://spfcblt.vercel.app/",
+    "imageUrl": "https://spfcblt.vercel.app/opengraph-image",
+    "buttonTitle": "🚩 Start",
+    "splashImageUrl": "https://spfcblt.vercel.app/splash.png",
+    "splashBackgroundColor": "#f5f0ec",
+    "requiredChains": [
+      "eip155:8453"
+    ],
+    "requiredCapabilities": [
+      "actions.signIn",
+      "wallet.getEthereumProvider",
+      "actions.swapToken"
+    ]
+  }
+}
