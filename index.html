@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FCPlayer - Music Player for Farcaster</title>
+    <meta name="description" content="Stream and share music on Farcaster with FCPlayer - powered by Spotify" />
+    <meta name="author" content="FCPlayer" />
+
+    <meta property="og:title" content="FCPlayer - Music on Farcaster" />
+    <meta property="og:description" content="Stream and share music on Farcaster with FCPlayer" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://fcplayer.vercel.app/og-image.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@farcaster" />
+    <meta name="twitter:image" content="https://fcplayer.vercel.app/og-image.png" />
+    
+    <meta name="fc:miniapp" content='{"version":"1","imageUrl":"https://fcplayer.vercel.app/og-image.png","button":{"title":"🎵 Play Music","action":{"type":"launch_frame","name":"FCPlayer","url":"https://fcplayer.vercel.app/","splashBackgroundColor":"#1a0f28"}}}' />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

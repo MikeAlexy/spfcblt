@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 280 80% 62%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 280 80% 62%;
+    --secondary: 200 80% 55%;
+    --secondary-foreground: 0 0% 98%;
+    --secondary-glow: 200 80% 55%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 280 80% 62%;
+    --radius: 0.5rem;
+
+    --player-bg: 240 10% 10%;
+    --player-control: 240 5% 18%;
+    --player-control-active: 280 80% 62%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(280, 80%, 62%), hsl(200, 80%, 55%));
+    --gradient-secondary: linear-gradient(135deg, hsl(200, 80%, 55%), hsl(280, 80%, 62%));
+    --gradient-overlay: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
+
+    --glow-primary: 0 8px 32px rgba(168, 85, 247, 0.4);
+    --glow-secondary: 0 8px 32px rgba(56, 189, 248, 0.4);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+
+    --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
