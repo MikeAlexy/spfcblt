@@ -331,8 +331,21 @@ export const SpotifyProvider: React.FC<{ children: ReactNode }> = ({ children })
   const play = async (contextUri?: string, uris?: string[], offset?: number) => {
     if (!accessToken) return;
 
-    const deviceId = deviceIdRef.current || devices.find(d => d.is_active)?.id;
+    // Always activate the web player device before playing
+    let deviceId = deviceIdRef.current;
+    if (!deviceId) {
+      // Try to find the active device
+      deviceId = devices.find(d => d.is_active)?.id;
+    }
     if (!deviceId) return;
+
+    // Transfer playback to web player if not active
+    const webPlayerDevice = devices.find(d => d.id === deviceId);
+    if (webPlayerDevice && !webPlayerDevice.is_active) {
+      await transferPlayback(deviceId);
+      // Wait a moment for device activation
+      await new Promise(res => setTimeout(res, 500));
+    }
 
     const body: any = {};
     if (contextUri) body.context_uri = contextUri;
