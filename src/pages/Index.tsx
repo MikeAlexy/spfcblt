@@ -1,15 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFarcaster } from '@/contexts/FarcasterContext';
 import { useSpotify } from '@/contexts/SpotifyContext';
 import { MusicPlayer } from '@/components/MusicPlayer';
+import { SearchTracks } from '@/components/SearchTracks';
+import { Playlists } from '@/components/Playlists';
+import { Library } from '@/components/Library';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Music2, LogOut, Loader2, AlertCircle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Music2, LogOut, Loader2, AlertCircle, Search, ListMusic, Library as LibraryIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function Index() {
   const { isReady, fid, username } = useFarcaster();
-  const { isAuthenticated, login, logout, isAuthenticating, authError, userProfile } = useSpotify();
+  const { isAuthenticated, login, logout, isAuthenticating, authError, userProfile, isPlayerReady } = useSpotify();
+  const [activeTab, setActiveTab] = useState('player');
 
   useEffect(() => {
     document.title = 'FCPlayer - Spotify Music Player';
@@ -28,7 +33,7 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
-      <div className="container max-w-2xl mx-auto px-4 py-8 space-y-6">
+      <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
         <header className="text-center space-y-4">
           <div className="flex items-center justify-center gap-3">
             <Music2 className="w-10 h-10 text-primary" />
@@ -37,7 +42,7 @@ export default function Index() {
             </h1>
           </div>
           <p className="text-muted-foreground">
-            Spotify Music Player for Farcaster
+            Full-Featured Spotify Player for Farcaster
           </p>
 
           {fid && (
@@ -60,7 +65,7 @@ export default function Index() {
             <div className="space-y-2">
               <h2 className="text-2xl font-semibold">Connect Your Spotify</h2>
               <p className="text-muted-foreground">
-                Sign in with your Spotify account to start playing music
+                Sign in with your Spotify account to unlock full music experience
               </p>
             </div>
 
@@ -84,8 +89,13 @@ export default function Index() {
             </Button>
 
             <div className="text-xs text-muted-foreground space-y-1">
-              <p>You'll need an active Spotify device to play music</p>
-              <p>Open Spotify on your phone or computer before connecting</p>
+              <p>Features:</p>
+              <ul className="list-disc list-inside">
+                <li>Full playback control with Web Playback SDK</li>
+                <li>Search tracks, albums, artists & playlists</li>
+                <li>Manage your playlists</li>
+                <li>View your library & listening history</li>
+              </ul>
             </div>
           </Card>
         ) : (
@@ -102,7 +112,19 @@ export default function Index() {
                   )}
                   <div className="flex-1">
                     <p className="font-semibold">{userProfile.display_name}</p>
-                    <p className="text-sm text-muted-foreground">{userProfile.email}</p>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span>{userProfile.email}</span>
+                      {userProfile.product === 'premium' && (
+                        <span className="px-2 py-0.5 rounded-full bg-green-500/20 text-green-500 text-xs font-semibold">
+                          Premium
+                        </span>
+                      )}
+                      {isPlayerReady && (
+                        <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold">
+                          Web Player Active
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <Button
                     variant="ghost"
@@ -117,13 +139,47 @@ export default function Index() {
               </Card>
             )}
 
-            <MusicPlayer />
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="player" className="gap-2">
+                  <Music2 className="w-4 h-4" />
+                  Player
+                </TabsTrigger>
+                <TabsTrigger value="search" className="gap-2">
+                  <Search className="w-4 h-4" />
+                  Search
+                </TabsTrigger>
+                <TabsTrigger value="playlists" className="gap-2">
+                  <ListMusic className="w-4 h-4" />
+                  Playlists
+                </TabsTrigger>
+                <TabsTrigger value="library" className="gap-2">
+                  <LibraryIcon className="w-4 h-4" />
+                  Library
+                </TabsTrigger>
+              </TabsList>
 
-            <Card className="p-6 bg-card/30 backdrop-blur-xl border-border/50 text-center">
-              <p className="text-sm text-muted-foreground">
-                Play music on your Spotify app to see controls here
-              </p>
-            </Card>
+              <TabsContent value="player" className="space-y-6">
+                <MusicPlayer />
+                <Card className="p-6 bg-card/30 backdrop-blur-xl border-border/50 text-center">
+                  <p className="text-sm text-muted-foreground">
+                    Control playback from any Spotify device or use the built-in web player
+                  </p>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="search">
+                <SearchTracks />
+              </TabsContent>
+
+              <TabsContent value="playlists">
+                <Playlists />
+              </TabsContent>
+
+              <TabsContent value="library">
+                <Library />
+              </TabsContent>
+            </Tabs>
           </div>
         )}
       </div>
